@@ -332,6 +332,16 @@ ghi_log("===============================================")
 + như vậy là ok
 + <img width="1918" height="1062" alt="image" src="https://github.com/user-attachments/assets/7dc5fa5b-1bc7-4558-bef3-cdcd0c437f44" /> </p>
 
++ tạo file tempered.pdf chỉnh sửa file pdf đã ký
+<img width="1171" height="419" alt="image" src="https://github.com/user-attachments/assets/3a7624f6-3757-49a0-8faf-82a519b432ff" /> </p>
++ tạo file tempered.py để làm việc
++ sau đó chjay để tạo ra file pdf tạm gọi là pdf edit
+<img width="1118" height="537" alt="image" src="https://github.com/user-attachments/assets/60ba4384-e6c5-479f-95d4-b86b589992a6" /></p>
++ kết quả khi tạo ra tempered.pdf
+<img width="1359" height="776" alt="image" src="https://github.com/user-attachments/assets/6f09f510-6952-4da7-aa2e-c68de0112b04" />
+<img width="1383" height="519" alt="image" src="https://github.com/user-attachments/assets/5a3e3f72-be6f-401f-93a7-731ae91ae9e1" />
+
+
 
 
 
