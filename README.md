@@ -54,7 +54,8 @@ VI. GỢI Ý CÔNG CỤ- OpenSSL, iText7/BouncyCastle, pypdf/PyPDF2.- Tham khả
 + tạo folder chứa 2 file pdf 1 là pdf gốc( original ) 1 là file pdf đã ký
 <img width="1480" height="813" alt="image" src="https://github.com/user-attachments/assets/2cfca123-3c32-420b-b907-8665f6be87c8" /> </p>
 + file pdf đã ký
-<img width="1237" height="684" alt="image" src="https://github.com/user-attachments/assets/fa89f220-fa74-4e51-a31c-f1bd6cdeae00" />
+<img width="1543" height="821" alt="image" src="https://github.com/user-attachments/assets/8a6cba4e-ce48-4a12-8517-0cdf92446f74" /> </p>
+
 # mã nguồn </p>
 ```
       
