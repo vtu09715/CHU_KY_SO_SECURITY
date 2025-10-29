@@ -59,40 +59,47 @@ VI. GỢI Ý CÔNG CỤ- OpenSSL, iText7/BouncyCastle, pypdf/PyPDF2.- Tham khả
 # mã nguồn </p>
 ```
       
-        from datetime import datetime
-        from pyhanko.sign import signers, fields
-        from pyhanko.stamp.text import TextStampStyle
-        from pyhanko.pdf_utils import images
-        from pyhanko.pdf_utils.text import TextBoxStyle
-        from pyhanko.pdf_utils.layout import SimpleBoxLayoutRule, AxisAlignment, Margins
-        from pyhanko.sign.general import load_cert_from_pemder, SigningError
-        from pyhanko_certvalidator import ValidationContext
-        from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
-        from pyhanko.sign.fields import SigFieldSpec
-        import os
+        # ==========================================
+# sign_pdf.py - Ký số tài liệu PDF bằng chứng chỉ tự ký (self-signed)
+# Cá nhân hóa bởi: Vu Duc Tu
+# ==========================================
 
-        # === CẤU HÌNH ĐƯỜNG DẪN ===
-        BASE_DIR = r"D:\BAITAP2"
-        PDF_IN = os.path.join(BASE_DIR, "pdf", "original.pdf")
-        PDF_OUT = os.path.join(BASE_DIR, "pdf", "signed.pdf")
-        KEY_FILE = os.path.join(BASE_DIR, "keys", "signer_key.pem")
-        CERT_FILE = os.path.join(BASE_DIR, "keys", "signer_cert.pem")
-        SIG_IMG = os.path.join(BASE_DIR, "anhky", "chuky.jpg")
+from datetime import datetime
+from pyhanko.sign import signers, fields
+from pyhanko.stamp.text import TextStampStyle
+from pyhanko.pdf_utils import images
+from pyhanko.pdf_utils.text import TextBoxStyle
+from pyhanko.pdf_utils.layout import SimpleBoxLayoutRule, AxisAlignment, Margins
+from pyhanko.sign.general import load_cert_from_pemder, SigningError
+from pyhanko_certvalidator import ValidationContext
+from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
+from pyhanko.sign.fields import SigFieldSpec
+import os
 
-        print("=== BẮT ĐẦU QUÁ TRÌNH KÝ PDF ===")
-        print("Bước 1: Chuẩn bị file PDF gốc (original.pdf).")
+# === 🗂️ CẤU HÌNH ĐƯỜNG DẪN ===
+BASE_DIR = r"D:\BAITAP2"
+PDF_IN = os.path.join(BASE_DIR, "pdf", "original.pdf")
+PDF_OUT = os.path.join(BASE_DIR, "pdf", "signed.pdf")
+KEY_FILE = os.path.join(BASE_DIR, "keys", "signer_key.pem")
+CERT_FILE = os.path.join(BASE_DIR, "keys", "signer_cert.pem")
+SIG_IMG = os.path.join(BASE_DIR, "anhky", "chuky.jpg")
 
-        # --- Tạo signer và ValidationContext ---
-        signer = signers.SimpleSigner.load(KEY_FILE, CERT_FILE, key_passphrase=None)
-        vc = ValidationContext(trust_roots=[load_cert_from_pemder(CERT_FILE)])
+print("==========================================")
+print("🖋️  BẮT ĐẦU QUÁ TRÌNH KÝ SỐ TÀI LIỆU PDF")
+print("==========================================")
+print("Bước 1️⃣: Chuẩn bị file PDF gốc:", PDF_IN)
 
-        # --- Bắt đầu ghi incremental PDF ---
-        try:
-        with open(PDF_IN, "rb") as inf:
+# --- 🔑 Tạo signer và ValidationContext ---
+signer = signers.SimpleSigner.load(KEY_FILE, CERT_FILE, key_passphrase=None)
+vc = ValidationContext(trust_roots=[load_cert_from_pemder(CERT_FILE)])
+
+# --- ✍️ Bắt đầu tiến trình ký ---
+try:
+    with open(PDF_IN, "rb") as inf:
         # ⚙️ Cho phép hybrid xref bằng cách tắt strict mode
         writer = IncrementalPdfFileWriter(inf, strict=False)
 
-        # 🟢 Lấy số trang để thêm chữ ký
+        # 🟢 Xác định số trang trong PDF
         try:
             pages = writer.root["/Pages"]
             num_pages = int(pages.get("/Count", 1))
@@ -100,22 +107,22 @@ VI. GỢI Ý CÔNG CỤ- OpenSSL, iText7/BouncyCastle, pypdf/PyPDF2.- Tham khả
             num_pages = 1
 
         target_page = num_pages - 1
-        print(f"Bước 2: Thêm trường chữ ký ở trang {target_page + 1}.")
+        print(f"Bước 2️⃣: Thêm trường chữ ký ở trang {target_page + 1}...")
 
-        # 🟩 Tạo field chữ ký ở góc dưới phải trang cuối
+        # 🟩 Thêm vùng chữ ký ở góc phải dưới
         fields.append_signature_field(
             writer,
             SigFieldSpec(
-                sig_field_name="SigField1",
+                sig_field_name="Signature_VuDucTu",
                 box=(240, 50, 550, 150),
                 on_page=target_page
             )
         )
 
-        # 🖼️ Hình ảnh chữ ký tay (jpg/png)
+        # 🖼️ Hình ảnh chữ ký tay
         background_img = images.PdfImage(SIG_IMG)
 
-        # --- Bố cục ảnh và chữ ---
+        # --- 📐 Bố cục khung chữ ký ---
         bg_layout = SimpleBoxLayoutRule(
             x_align=AxisAlignment.ALIGN_MIN,
             y_align=AxisAlignment.ALIGN_MID,
@@ -128,17 +135,18 @@ VI. GỢI Ý CÔNG CỤ- OpenSSL, iText7/BouncyCastle, pypdf/PyPDF2.- Tham khả
         )
         text_style = TextBoxStyle(font_size=13)
 
-        # 🕒 Thông tin chữ ký
+        # 🕒 Thông tin chữ ký hiển thị trong tem
         ngay_ky = datetime.now().strftime("%d/%m/%Y")
         stamp_text = (
-            "Vũ Đức Tú"
-            "\nSĐT: 0813424299"
-            "\nMSV: K225480106068"
-            "\nĐịa chỉ: Thái Nguyên"
+            "Vu Duc Tu "
+            "\nSV: DHKTCN"
+            "\nMSSV: K225480106068"
+            "\nSDT: 0813424299"
+            "\nfrom: THAI NGUYEN"
             f"\nNgày ký: {ngay_ky}"
         )
 
-        # --- Khung chữ ký ---
+        # --- 🪶 Cấu trúc khung hiển thị chữ ký ---
         stamp_style = TextStampStyle(
             stamp_text=stamp_text,
             background=background_img,
@@ -149,39 +157,181 @@ VI. GỢI Ý CÔNG CỤ- OpenSSL, iText7/BouncyCastle, pypdf/PyPDF2.- Tham khả
             background_opacity=1.0,
         )
 
-        # --- Metadata chữ ký ---
+        # --- 🧾 Thông tin metadata của chữ ký ---
         meta = signers.PdfSignatureMetadata(
-            field_name="SigField1",
-            reason="Nộp bài: Chữ ký số PDF - 58KTP",
+            field_name="Signature_VuDucTu",
+            reason="Bài tập: Ký số PDF bằng Python - Lớp K58",
             location="Thái Nguyên, Việt Nam",
             md_algorithm="sha256",
         )
 
-        # --- Khởi tạo signer ---
+        # --- 🧑‍💻 Khởi tạo signer ---
         pdf_signer = signers.PdfSigner(
             signature_meta=meta,
             signer=signer,
             stamp_style=stamp_style,
         )
 
-        print("Bước 3: Tạo PKCS#7 detached (messageDigest, signingTime, contentType).")
-        print("Bước 4: Ký tài liệu...")
+        print("Bước 3️⃣: Tạo PKCS#7 (messageDigest, signingTime, contentType)...")
+        print("Bước 4️⃣: Tiến hành ký...")
 
-        # --- Tiến hành ký PDF ---
+        # --- ✨ Tiến hành ký số tài liệu ---
         with open(PDF_OUT, "wb") as outf:
             pdf_signer.sign_pdf(writer, output=outf)
 
-        print("\n✅ KÝ THÀNH CÔNG!")
+        print("\n✅ HOÀN TẤT KÝ SỐ!")
         print("📄 File đã lưu tại:", PDF_OUT)
+        print("🧾 Có thể kiểm tra chữ ký bằng verify_check_vn.py")
 
-    except SigningError as e:
+except SigningError as e:
     print("\n❌ LỖI KHI KÝ:", e)
     print("👉 Nếu PDF gốc có hybrid xref, hãy normalize lại bằng pikepdf trước khi ký.")
-    except Exception as e:
+except Exception as e:
     print("\n❌ LỖI KHÔNG XÁC ĐỊNH:", e)
     print("⚠️ Kiểm tra lại đường dẫn file hoặc định dạng PDF.")
 
-    print("=== HOÀN TẤT QUÁ TRÌNH KÝ ===")```
+print("==========================================")
+print("🏁 HOÀN TẤT QUÁ TRÌNH KÝ PDF")
+print("==========================================")
+```
+
++ Sau khi ký thực hiện kiểm tra chữ ký như sau
++ tạo fiel verify_pdf.py trong Script, để chỏ tới file pdf có chữ ký và kiểm tra 
+  <img width="1222" height="347" alt="image" src="https://github.com/user-attachments/assets/f67bd3bb-8915-48c1-bd24-24c02327bfff" /></p>
+```
+  # ==========================================
+# Người phát triển: Vũ Đức Tú – K58 – Thái Nguyên
+# ==========================================
+import os, io, hashlib, datetime
+from datetime import timezone, timedelta
+from pyhanko.sign import validation
+from pyhanko.sign.diff_analysis import ModificationLevel
+from pyhanko.pdf_utils.reader import PdfFileReader
+from pyhanko.keys import load_cert_from_pemder
+from pyhanko_certvalidator import ValidationContext
+
+# === 🔧 Cấu hình tệp tin (đồng bộ với file sign_pdf.py) ===
+DUONG_DAN_PDF = r"D:\BAITAP2\pdf\signed.pdf"
+DUONG_DAN_CHUNG_THU = r"D:\BAITAP2\keys\signer_cert.pem"
+DUONG_DAN_LOG = r"D:\BAITAP2\KIEMTRA.txt"
+
+# === ✍️ Hàm ghi log ra tệp văn bản (hiển thị đồng thời trên console) ===
+def ghi_log(noi_dung):
+    print(noi_dung)
+    with open(DUONG_DAN_LOG, "a", encoding="utf-8") as file_log:
+        file_log.write(noi_dung + "\n")
+
+# === 🕐 Bắt đầu quá trình xác thực ===
+if os.path.exists(DUONG_DAN_LOG):
+    os.remove(DUONG_DAN_LOG)
+
+ghi_log("=== HỆ THỐNG XÁC THỰC CHỮ KÝ PDF – PHIÊN BẢN VŨ ĐỨC TÚ ===")
+ghi_log(f"📅 Thời điểm kiểm tra: {datetime.datetime.now()}")
+ghi_log(f"📄 Tệp PDF cần xác thực: {DUONG_DAN_PDF}")
+ghi_log("===============================================")
+
+# === 🧩 Nạp chứng thư tin cậy để xác thực ===
+try:
+    chung_thu_tin_cay = load_cert_from_pemder(DUONG_DAN_CHUNG_THU)
+    ngu_canh = ValidationContext(trust_roots=[chung_thu_tin_cay])
+except Exception as loi:
+    ghi_log(f"❌ Lỗi khi tải chứng thư tin cậy: {loi}")
+    exit()
+
+# === 📄 Mở file PDF và phát hiện chữ ký ===
+try:
+    with open(DUONG_DAN_PDF, "rb") as tep_pdf:
+        pdf_doc = PdfFileReader(tep_pdf, strict=False)
+
+        danh_sach_chu_ky = pdf_doc.embedded_signatures
+
+        if not danh_sach_chu_ky:
+            ghi_log("❌ Không tìm thấy chữ ký nào trong tài liệu PDF.")
+            exit()
+
+        chu_ky = danh_sach_chu_ky[0]
+        ten_truong = chu_ky.field_name or "Signature1"
+        ghi_log(f"🔍 Phát hiện trường chữ ký: {ten_truong}")
+
+        # === Lấy thông tin cơ bản ===
+        doi_tuong_chu_ky = chu_ky.sig_object
+        do_dai_noi_dung = len(doi_tuong_chu_ky.get('/Contents'))
+        byte_range = doi_tuong_chu_ky.get('/ByteRange')
+        ghi_log(f"Kích thước chữ ký (/Contents): {do_dai_noi_dung} byte")
+        ghi_log(f"Vùng ByteRange: {byte_range}")
+
+        # === 🧮 Tính lại giá trị băm SHA256 của vùng ký ===
+        tep_pdf.seek(0)
+        du_lieu = tep_pdf.read()
+        br = list(byte_range)
+        du_lieu_ky = du_lieu[br[0]:br[0]+br[1]] + du_lieu[br[2]:br[2]+br[3]]
+        gia_tri_bam = hashlib.sha256(du_lieu_ky).hexdigest()
+        ghi_log(f"Giá trị SHA256 tính được: {gia_tri_bam[:64]} ✅")
+
+        # === 🔍 Tiến hành xác thực chữ ký ===
+        try:
+            ket_qua = validation.validate_pdf_signature(chu_ky, ngu_canh)
+        except Exception as e:
+            ghi_log(f"⚠️ Không thể xác thực bằng pyhanko: {e}")
+            ghi_log("👉 Gợi ý: Hãy lưu lại file PDF bằng Adobe hoặc Foxit rồi chạy lại.")
+            exit()
+
+        ghi_log("===============================================")
+        ghi_log("🔒 KẾT QUẢ XÁC THỰC CHỮ KÝ:")
+        ghi_log(ket_qua.pretty_print_details())
+
+        # === 👤 Thông tin chứng thư người ký ===
+        chung_thu_nguoi_ky = getattr(ket_qua, "signing_cert", None)
+        if chung_thu_nguoi_ky:
+            ghi_log("\n📜 THÔNG TIN CHỨNG THƯ NGƯỜI KÝ:")
+            ghi_log(f"  Chủ thể: {chung_thu_nguoi_ky.subject.human_friendly}")
+            sha1 = chung_thu_nguoi_ky.sha1_fingerprint
+            sha256 = chung_thu_nguoi_ky.sha256_fingerprint
+            sha1 = sha1.hex() if hasattr(sha1, 'hex') else sha1
+            sha256 = sha256.hex() if hasattr(sha256, 'hex') else sha256
+            ghi_log(f"  Dấu vân tay SHA1: {sha1}")
+            ghi_log(f"  Dấu vân tay SHA256: {sha256}")
+        else:
+            ghi_log("⚠️ Không thể đọc chứng thư của người ký.")
+
+        # === 🕓 Thời gian ký ===
+        thoi_gian_ky = getattr(ket_qua, "signer_reported_dt", None)
+        if thoi_gian_ky:
+            gio_vn = thoi_gian_ky.astimezone(timezone(timedelta(hours=7)))
+            ghi_log(f"\n🕒 Thời gian ký (giờ Việt Nam): {gio_vn}")
+        else:
+            ghi_log("⚠️ Không tìm thấy tem thời gian (timestamp).")
+
+        # === 🔍 Kiểm tra tình trạng chỉnh sửa tài liệu ===
+        muc_do = getattr(ket_qua, "modification_level", None)
+        if muc_do == ModificationLevel.NONE:
+            ghi_log("✅ Tài liệu KHÔNG bị chỉnh sửa sau khi ký.")
+        elif muc_do == ModificationLevel.FORM_FILLING:
+            ghi_log("⚠️ Có chỉnh sửa nhẹ (điền biểu mẫu) sau khi ký.")
+        else:
+            ghi_log("❌ Phát hiện thay đổi nội dung sau khi ký!")
+
+        ghi_log("===============================================")
+
+        # === 📋 Tổng kết ===
+        if getattr(ket_qua, "bottom_line", False):
+            ghi_log("✅ CHỮ KÝ HỢP LỆ – TÀI LIỆU NGUYÊN VẸN.")
+        else:
+            ghi_log("❌ CHỮ KÝ KHÔNG HỢP LỆ HOẶC FILE ĐÃ BỊ SỬA ĐỔI.")
+
+except Exception as loi:
+    ghi_log(f"❌ Lỗi khi xác thực tệp PDF: {loi}")
+
+ghi_log("\n📘 Quá trình kiểm tra hoàn tất – kết quả được lưu trong kqkt.txt.")
+ghi_log("👨‍💻 Người thực hiện: Vũ Đức Tú – K58 – Đại học Thái Nguyên")
+ghi_log("===============================================")
+
+  ``` 
++ sau khi nhấn chạy sẽ tạo ra file txt ghi kết quả kiểm tra thông tin...
+<img width="485" height="211" alt="image" src="https://github.com/user-attachments/assets/f2110081-4b07-40ab-8bb6-e1a6c455c76a" /> </p>
++ như vậy là ok
++ <img width="1918" height="1062" alt="image" src="https://github.com/user-attachments/assets/7dc5fa5b-1bc7-4558-bef3-cdcd0c437f44" /> </p>
+
 
 
 
