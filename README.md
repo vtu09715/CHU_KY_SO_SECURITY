@@ -340,7 +340,9 @@ ghi_log("===============================================")
 + kết quả khi tạo ra tempered.pdf
 <img width="1359" height="776" alt="image" src="https://github.com/user-attachments/assets/6f09f510-6952-4da7-aa2e-c68de0112b04" />
 <img width="1383" height="519" alt="image" src="https://github.com/user-attachments/assets/5a3e3f72-be6f-401f-93a7-731ae91ae9e1" />
-
++ kiểm tra chữ ký xem chuẩn chưa?
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/1bb66cf7-998a-4b57-8996-86dd9bef84f7" />
++ KL: mọi thứ đã ok rồi bài này rất hay phù hợp với thời đại để. EM CẢM ƠN THẦY ĐÃ XEM BÀI LÀM CỦA EM 
 
 
 
