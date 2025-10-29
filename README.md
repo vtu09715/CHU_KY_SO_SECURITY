@@ -57,40 +57,37 @@ VI. GỢI Ý CÔNG CỤ- OpenSSL, iText7/BouncyCastle, pypdf/PyPDF2.- Tham khả
 <img width="1237" height="684" alt="image" src="https://github.com/user-attachments/assets/fa89f220-fa74-4e51-a31c-f1bd6cdeae00" />
 # mã nguồn </p>
 ```
-# ==========================================
-# sign_pdf.py - Phiên bản ổn định PyHanko 0.31.0 (Windows)
-# Tác giả: Vũ Đức Tú - 58KTP
-# ==========================================
-from datetime import datetime
-from pyhanko.sign import signers, fields
-from pyhanko.stamp.text import TextStampStyle
-from pyhanko.pdf_utils import images
-from pyhanko.pdf_utils.text import TextBoxStyle
-from pyhanko.pdf_utils.layout import SimpleBoxLayoutRule, AxisAlignment, Margins
-from pyhanko.sign.general import load_cert_from_pemder, SigningError
-from pyhanko_certvalidator import ValidationContext
-from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
-from pyhanko.sign.fields import SigFieldSpec
-import os
+      
+        from datetime import datetime
+        from pyhanko.sign import signers, fields
+        from pyhanko.stamp.text import TextStampStyle
+        from pyhanko.pdf_utils import images
+        from pyhanko.pdf_utils.text import TextBoxStyle
+        from pyhanko.pdf_utils.layout import SimpleBoxLayoutRule, AxisAlignment, Margins
+        from pyhanko.sign.general import load_cert_from_pemder, SigningError
+        from pyhanko_certvalidator import ValidationContext
+        from pyhanko.pdf_utils.incremental_writer import IncrementalPdfFileWriter
+        from pyhanko.sign.fields import SigFieldSpec
+        import os
 
-# === CẤU HÌNH ĐƯỜNG DẪN ===
-BASE_DIR = r"D:\BAITAP2"
-PDF_IN = os.path.join(BASE_DIR, "pdf", "original.pdf")
-PDF_OUT = os.path.join(BASE_DIR, "pdf", "signed.pdf")
-KEY_FILE = os.path.join(BASE_DIR, "keys", "signer_key.pem")
-CERT_FILE = os.path.join(BASE_DIR, "keys", "signer_cert.pem")
-SIG_IMG = os.path.join(BASE_DIR, "anhky", "chuky.jpg")
+        # === CẤU HÌNH ĐƯỜNG DẪN ===
+        BASE_DIR = r"D:\BAITAP2"
+        PDF_IN = os.path.join(BASE_DIR, "pdf", "original.pdf")
+        PDF_OUT = os.path.join(BASE_DIR, "pdf", "signed.pdf")
+        KEY_FILE = os.path.join(BASE_DIR, "keys", "signer_key.pem")
+        CERT_FILE = os.path.join(BASE_DIR, "keys", "signer_cert.pem")
+        SIG_IMG = os.path.join(BASE_DIR, "anhky", "chuky.jpg")
 
-print("=== BẮT ĐẦU QUÁ TRÌNH KÝ PDF ===")
-print("Bước 1: Chuẩn bị file PDF gốc (original.pdf).")
+        print("=== BẮT ĐẦU QUÁ TRÌNH KÝ PDF ===")
+        print("Bước 1: Chuẩn bị file PDF gốc (original.pdf).")
 
-# --- Tạo signer và ValidationContext ---
-signer = signers.SimpleSigner.load(KEY_FILE, CERT_FILE, key_passphrase=None)
-vc = ValidationContext(trust_roots=[load_cert_from_pemder(CERT_FILE)])
+        # --- Tạo signer và ValidationContext ---
+        signer = signers.SimpleSigner.load(KEY_FILE, CERT_FILE, key_passphrase=None)
+        vc = ValidationContext(trust_roots=[load_cert_from_pemder(CERT_FILE)])
 
-# --- Bắt đầu ghi incremental PDF ---
-try:
-    with open(PDF_IN, "rb") as inf:
+        # --- Bắt đầu ghi incremental PDF ---
+        try:
+        with open(PDF_IN, "rb") as inf:
         # ⚙️ Cho phép hybrid xref bằng cách tắt strict mode
         writer = IncrementalPdfFileWriter(inf, strict=False)
 
@@ -176,15 +173,14 @@ try:
         print("\n✅ KÝ THÀNH CÔNG!")
         print("📄 File đã lưu tại:", PDF_OUT)
 
-except SigningError as e:
+    except SigningError as e:
     print("\n❌ LỖI KHI KÝ:", e)
     print("👉 Nếu PDF gốc có hybrid xref, hãy normalize lại bằng pikepdf trước khi ký.")
-except Exception as e:
+    except Exception as e:
     print("\n❌ LỖI KHÔNG XÁC ĐỊNH:", e)
     print("⚠️ Kiểm tra lại đường dẫn file hoặc định dạng PDF.")
 
-print("=== HOÀN TẤT QUÁ TRÌNH KÝ ===")
-```
+    print("=== HOÀN TẤT QUÁ TRÌNH KÝ ===")```
 
 
 
